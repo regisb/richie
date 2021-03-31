@@ -1,6 +1,6 @@
 import { createSpec, derived, faker } from '@helpscout/helix';
 import { CommonDataProps } from 'types/commonDataProps';
-import { ApiBackend } from 'types/api';
+import { APIBackend } from 'types/api';
 import { DehydratedState } from 'react-query/types/hydration';
 import { QueryState } from 'react-query/types/core/query';
 import { MutationState } from 'react-query/types/core/mutation';
@@ -38,18 +38,25 @@ export const UserFactory = createSpec({
   username: faker.internet.userName(),
 });
 
+export const FonzieUserFactory = compose(
+  UserFactory,
+  createSpec({
+    access_token: btoa(faker.datatype.uuid()),
+  }),
+);
+
 export const ContextFactory = (context: Partial<CommonDataProps['context']> = {}) =>
   createSpec({
     auth_endpoint: 'https://endpoint.test',
     csrftoken: faker.random.alphaNumeric(64),
     environment: 'test',
     authentication: {
-      backend: ApiBackend.BASE,
+      backend: APIBackend.BASE,
       endpoint: 'https://endpoint.test',
     },
     lms_backends: [
       {
-        backend: ApiBackend.BASE,
+        backend: APIBackend.BASE,
         course_regexp: '.*',
         endpoint: 'https://endpoint.test',
       },

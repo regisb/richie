@@ -4,7 +4,7 @@ import { Maybe, Nullable } from 'types/utils';
 import APIHandler from './lms';
 
 const EnrollmentApi = (resourceLink: string) => {
-  const LMS = APIHandler(resourceLink);
+  const LMS = APIHandler(resourceLink) as any;
 
   return {
     get: async (user: Nullable<User>) => {

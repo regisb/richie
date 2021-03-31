@@ -2,5 +2,9 @@
 AUTHENTICATION_BASE_URL=https://edx.local.dev:8073
 AUTHENTICATION_BACKEND=openedx-hawthorn
 
+# Joanie
+JOANIE_ENABLED=False
+JOANIE_BASE_URL=http://localhost:8071
+
 # LMS Backend
 EDX_BASE_URL=https://edx.local.dev:8073

@@ -10,6 +10,11 @@ export enum RequestStatus {
   SUCCESS = 'success',
 }
 
+export interface APIResponseError {
+  code: number;
+  message: string;
+}
+
 export interface APIResponseListMeta {
   count: number;
   offset: number;
@@ -38,6 +43,7 @@ export interface APICourseSearchResponse {
 }
 
 export interface APIAuthentication {
+  accessToken?: () => Nullable<string>;
   login: () => void;
   logout: () => Promise<void>;
   me: () => Promise<Nullable<User>>;
@@ -55,17 +61,15 @@ export interface APILms {
   enrollment: APIEnrollment;
 }
 
-export interface APIJoanie {}
-
-interface APIRoute {
-  [key: string]: APIRoute | string;
+export interface APIRoute {
+  [key: string]: string | APIRoute;
 }
 
-export interface ApiOptions {
+export interface APIOptions {
   routes: APIRoute;
 }
 
-export enum ApiBackend {
+export enum APIBackend {
   BASE = 'base',
   FONZIE = 'fonzie',
   JOANIE = 'joanie',

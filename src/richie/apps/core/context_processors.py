@@ -91,6 +91,12 @@ def site_metas(request: HttpRequest):
             "backend": authentication_delegation["BACKEND"],
         }
 
+    if settings.JOANIE["ENABLED"] is True:
+        if settings.JOANIE["BASE_URL"] is not None:
+            context["FRONTEND_CONTEXT"]["context"]["joanie_backend"] = {
+                "endpoint": settings.JOANIE["BASE_URL"],
+            }
+
     if getattr(settings, "RICHIE_LMS_BACKENDS", None):
         context["FRONTEND_CONTEXT"]["context"]["lms_backends"] = [
             {
