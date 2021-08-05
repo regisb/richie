@@ -12,6 +12,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Create a generic React Modal component
 - Create a context util
 - Schema.org structured data markup for course detail pages
 - Course code information on the course glimpse
