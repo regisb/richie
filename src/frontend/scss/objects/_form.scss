@@ -1,0 +1,290 @@
+//
+// Form objects
+//
+
+//
+// For accessiblity and user experience purposes, an input should be always
+// associated to a label.
+//
+//
+// Example of a form class structure:
+// .form
+//  .form-field
+//    .form-field__input
+//    .form-field__label
+//  .form-field
+//    .form-field__checkbox-input
+//    .form-field__checkbox-control
+//    .form-field__label
+//  .form-field
+//    .form-field__label
+//    .form-field__select-container
+//      .form-field__select-input
+//      .form-field__select-arrow
+
+@mixin input-base-style() {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 4px;
+  border: 2px solid r-theme-val(form, input-border);
+  color: r-theme-val(form, input-color);
+  height: 100%;
+  padding: 1rem 1rem 0 1rem;
+  width: 100%;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:focus {
+    border-color: r-theme-val(form, input-border-focus);
+    box-shadow: 0 0 0 2px r-theme-val(form, input-outline);
+    outline: none;
+  }
+}
+
+.form {
+  &-group {
+    display: flex;
+    flex-direction: row;
+
+    & > .form-field {
+      flex: 1;
+      margin-bottom: 1rem;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+    }
+
+    margin: 0 -0.5rem;
+  }
+
+  &-field {
+    cursor: pointer;
+    font-family: $r-font-family-hind;
+    font-size: 1rem;
+    line-height: 1rem;
+    position: relative;
+    margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    // Common elements
+    &__label {
+      cursor: pointer;
+      margin: 0;
+    }
+
+    // Text inputs & Textarea
+    &__input,
+    &__textarea {
+      @include input-base-style;
+    }
+
+    &__textarea {
+      padding-top: 1.5rem;
+    }
+
+    &__input + &__label,
+    &__textarea + &__label {
+      color: r-theme-val(form, input-placeholder);
+      left: 0;
+      margin: 0 1rem;
+      max-width: calc(100% - 2rem);
+      overflow: hidden;
+      padding: 0.33rem 0;
+      pointer-events: none;
+      position: absolute;
+      text-overflow: ellipsis;
+      transform-origin: top left;
+      transition: transform 300ms $r-ease-out;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    &__input + &__label {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &__textarea + &__label {
+      top: 0.33rem;
+      z-index: 1;
+    }
+
+    &__input:focus + &__label,
+    &__input:not(:placeholder-shown) + &__label {
+      transform: scale(0.66) translateY(-100%);
+    }
+
+    &__textarea:focus + &__label,
+    &__textarea:not(:placeholder-shown) + &__label {
+      transform: scale(0.66);
+    }
+
+    &__input[aria-required='true'] + &__label:after,
+    &__textarea[aria-required='true'] + &__label:after,
+    &__input:required + &__label:after,
+    &__textarea:required + &__label:after {
+      color: r-color('indianred3');
+      content: '*';
+      vertical-align: super;
+    }
+
+    // Checkbox & Radio
+    &__checkbox-input,
+    &__radio-input {
+      opacity: 0;
+      position: absolute;
+      z-index: -1;
+    }
+
+    &__checkbox-input:focus + &__label > &__checkbox-control,
+    &__radio-input:focus + &__label > &__radio-control {
+      box-shadow: 0 0 0 2px r-theme-val(form, input-outline);
+    }
+
+    &__checkbox-control,
+    &__radio-control {
+      $tick-size: 1.125rem;
+      align-items: center;
+      background-color: r-theme-val(form, input-unchecked-background);
+      border-radius: 100vw;
+      border: 2px solid r-theme-val(form, input-unchecked-border);
+      box-sizing: border-box;
+      color: r-theme-val(form, input-unchecked-color);
+      display: inline-flex;
+      height: $tick-size;
+      justify-content: center;
+      margin-right: 0.625rem;
+      position: relative;
+      vertical-align: middle;
+      width: $tick-size;
+    }
+
+    &__checkbox-control {
+      svg {
+        fill: currentColor;
+        max-height: 100%;
+        transform: translate(-$onepixel * 0.45, $onepixel * 0.45);
+        width: 65%;
+      }
+    }
+
+    &__radio-control:before {
+      background: transparent;
+      border-radius: 100vw;
+      content: '';
+      display: block;
+      height: 60%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(calc(100 / 60));
+      transform-origin: center center;
+      transition: transform 400ms $r-ease-out;
+      width: 60%;
+    }
+
+    &__checkbox-input:checked + &__label > &__checkbox-control,
+    &__radio-input:checked + &__label > &__radio-control {
+      background-color: r-theme-val(form, input-checked-background);
+      border-color: r-theme-val(form, input-checked-border);
+      color: r-theme-val(form, input-checked-color);
+    }
+
+    &__radio-input:checked + &__label > &__radio-control:before {
+      background-color: r-theme-val(form, input-checked-color);
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    // Select
+    &__select-container {
+      position: relative;
+    }
+
+    &__select-input {
+      @include input-base-style;
+      background-color: transparent;
+      cursor: pointer;
+      line-height: 1em;
+      padding: 1rem 1rem 0.75rem 1rem;
+      position: relative;
+    }
+
+    &__select-input + &__select-arrow {
+      border-top: 6px solid currentColor;
+      border-right: 6px solid transparent;
+      border-left: 6px solid transparent;
+      border-radius: 6px;
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      height: 6px;
+      width: 6px;
+    }
+
+    &__label + &__select-container {
+      margin-top: 0.5rem;
+    }
+
+    // == Modifiers
+    &--minimal {
+      display: inline-block;
+      margin: 0;
+      width: inherit;
+
+      .form-field__label {
+        position: absolute;
+        left: -9999rem;
+      }
+
+      .form-field__select-container {
+        display: inline-block;
+        margin-top: 0;
+      }
+
+      .form-field__select-input {
+        border: none;
+        box-sizing: content-box;
+        padding: 0 1.5rem 0 0;
+        text-overflow: ellipsis;
+      }
+    }
+
+    &--align-right {
+      text-align: right;
+
+      .form-field__input,
+      .form-field__select-input,
+      .form-field__textarea {
+        text-align: right;
+      }
+
+      .form-field__input + .form-field__label,
+      .form-field__textarea + .form-field__label {
+        left: inherit;
+        right: 0;
+        transform-origin: top right;
+      }
+    }
+
+    // Error
+    &--error {
+      .form-field__input,
+      .form-field__textarea,
+      .form-field__select-input {
+        border-color: r-theme-val(form, input-border-error);
+        color: r-theme-val(form, input-color-error);
+      }
+
+      .form-field__checkbox-input + .form-field__label,
+      .form-field__radio-input + .form-field__label {
+        color: r-theme-val(form, input-color-error);
+      }
+    }
+  }
+}
