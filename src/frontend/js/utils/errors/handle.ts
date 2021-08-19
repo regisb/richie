@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
+import context from 'utils/context';
 
-const context = window.__richie_frontend_context__?.context;
 if (context?.sentry_dsn) {
   Sentry.init({
     dsn: context.sentry_dsn,
