@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import EnrollmentApiInterface from 'utils/api/enrollment';
-import { useSession } from 'data/useSession';
+import { useSession } from 'data/SessionProvider';
 
 const useEnrollment = (resourceLink: string) => {
   const { user } = useSession();
