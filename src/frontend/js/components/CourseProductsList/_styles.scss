@@ -1,0 +1,158 @@
+/*
+  CourseProductList component styles
+*/
+.product-item {
+  background-color: white;
+  border-radius: 6px;
+  border: 6px solid r-theme-val(product-item, base-border);
+  overflow: hidden;
+
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
+
+  &__header {
+    align-items: center;
+    background-color: r-theme-val(product-item, base-border);
+    color: r-theme-val(product-item, light-color);
+    display: flex;
+    font-family: $r-font-family-montserrat;
+    font-weight: $font-weight-bold;
+    justify-content: space-between;
+    padding: 1rem 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+  }
+
+  &__price {
+    background-color: r-theme-val(product-item, light-color);
+    border-radius: 100vw;
+    color: r-theme-val(product-item, base-border);
+    font-size: 0.81rem;
+    margin-left: 1.5rem;
+    padding: 0.375rem 0.81rem;
+  }
+
+  &-content {
+    @include m-o-list-group__container;
+    color: r-theme-val(product-item, base-color);
+    list-style: none;
+    padding: 1.25rem 2rem;
+  }
+
+  &__row {
+    margin-bottom: 0;
+    width: 100%;
+
+    &:not(:last-child) {
+      margin-bottom: 2rem;
+    }
+
+    &__title {
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+
+    &__description {
+      color: r-theme-val(product-item, lighter-color);
+      font-size: 0.8125rem;
+      line-height: 1.4em;
+    }
+  }
+
+  &__course-item {
+    .course-item {
+      &__course-run-header {
+        color: r-theme-val(product-item, lighter-color);
+        display: flex;
+        font-size: 0.69rem;
+        font-weight: $font-weight-bold;
+        justify-content: space-between;
+        padding-left: 1rem;
+        text-transform: uppercase;
+      }
+
+      &__course-run-list {
+        @include m-o-list-group__container;
+        color: r-theme-val(product-item, lighter-color);
+
+        .course-run-item {
+          align-items: center;
+          color: r-theme-val(product-item, base-color);
+          display: flex;
+          justify-content: space-between;
+          padding-left: 1rem;
+          position: relative;
+
+          &::before {
+            background-color: r-theme-val(product-item, lighter-color);
+            border-radius: 100%;
+            content: '';
+            display: block;
+            height: 6px;
+            left: 0;
+            position: absolute;
+            width: 6px;
+          }
+
+          &::after {
+            background-color: r-theme-val(product-item, lighter-color);
+            content: '';
+            display: block;
+            flex: 1;
+            height: $onepixel;
+            left: 50%;
+            position: absolute;
+            transform: translateX(-40%);
+            width: 25%;
+          }
+
+          &__date {
+            background-color: r-theme-val(product-item, base-background);
+            z-index: 1;
+
+            &:first-child {
+              padding-right: 0.3125rem;
+            }
+            &:last-child {
+              padding-left: 0.3125rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__certificate-item {
+    align-items: flex-start;
+    display: flex;
+
+    .certificate-item__icon {
+      fill: r-theme-val(product-item, base-border);
+      flex: 0 0 auto;
+      height: 2rem;
+      margin-right: 0.375rem;
+    }
+
+    .product-item__row__title {
+      margin: 0.1875rem 0;
+    }
+  }
+
+  &__footer {
+    padding: 0 0.875rem 1rem 0.875rem;
+
+    .product-item__cta {
+      @include button-base(
+        $font-color: r-theme-val(product-item, button-color),
+        $font-family: $r-font-family-montserrat,
+        $font-size: 1rem,
+        $font-weight: $font-weight-bold
+      );
+      background-color: r-theme-val(product-item, button-background);
+      width: 100%;
+    }
+  }
+}

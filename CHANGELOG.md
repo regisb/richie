@@ -12,6 +12,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Create CourseProducts widget
 - Create form styles
 - Create a generic React Modal component
 - Create a context util
