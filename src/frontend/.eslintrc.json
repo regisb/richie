@@ -65,7 +65,8 @@
     "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "warn",
     "react/prop-types": "off",
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "react/style-prop-object": ["error", { "allow": ["FormattedNumber"] }]
   },
   "settings": {
     "polyfills": ["fetch", "Promise"]
