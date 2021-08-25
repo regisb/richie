@@ -1,14 +1,16 @@
 import React, { createContext, useContext } from 'react';
-import { useQuery, QueryObserverBaseResult } from 'react-query';
+import { useQuery, QueryObserverBaseResult, useQueryClient } from 'react-query';
 import { Maybe } from 'types/utils';
 import { Course } from 'types/Joanie';
 import API from 'utils/api/joanie';
 import { useSession } from 'data/SessionProvider';
 import { REACT_QUERY_SETTINGS } from 'settings';
+import { APIResponseError } from 'types/api';
 
 interface Context {
   item: Maybe<Course>;
   methods: {
+    invalidate: () => void;
     refetch: QueryObserverBaseResult['refetch'];
   };
   states: {
@@ -19,8 +21,9 @@ interface Context {
 const CourseContext = createContext<Maybe<Context>>(undefined);
 
 export const CourseProvider: React.FC<{ code: string }> = ({ code, children }) => {
+  const queryClient = useQueryClient();
   const { user } = useSession();
-  const queryKey = user ? ['user', 'course', code] : ['course', code];
+  const QUERY_KEY = user ? ['user', 'course', code] : ['course', code];
   const {
     data: course,
     refetch,
@@ -36,13 +39,20 @@ export const CourseProvider: React.FC<{ code: string }> = ({ code, children }) =
     },
   });
 
-  return (
-    <CourseContext.Provider
-      value={{ item: course, methods: { refetch }, states: { fetching: isLoading } }}
-    >
-      {children}
-    </CourseContext.Provider>
-  );
+  const invalidate = async () => {
+    await queryClient.invalidateQueries(QUERY_KEY);
+  };
+
+  const context = {
+    item: course,
+    methods: {
+      invalidate,
+      refetch,
+    },
+    states: { fetching: isLoading },
+  };
+
+  return <CourseContext.Provider value={context}>{children}</CourseContext.Provider>;
 };
 
 export const useCourse = () => {

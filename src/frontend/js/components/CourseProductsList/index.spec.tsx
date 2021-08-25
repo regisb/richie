@@ -8,8 +8,8 @@ import {
   CertificateProductFactory,
   ContextFactory as mockContextFactory,
   CourseFactory,
-  OrderFactory,
   PersistedClientFactory,
+  ProductOrderFactory,
   ProductFactory,
   QueryStateFactory,
   FonzieUserFactory,
@@ -159,21 +159,18 @@ describe('CourseProductsList', () => {
     );
   });
 
-  it("retrieves user's orders when user is authenticated then hides sale CTA if user owns a product", async () => {
+  it('shows product owned by the authenticated user and course runs which user is enrolled', async () => {
     initializeUser();
     const queryClient = createQueryClient({ persistor: true });
+    const [product, order] = ProductOrderFactory().generate();
     const course = CourseFactory.extend({
-      products: [ProductFactory.generate()],
-    }).generate();
-    const product = course.products[0];
-    const order = OrderFactory.extend({
-      course: course.code,
-      product: product.id,
+      products: [product],
+      orders: [order],
     }).generate();
 
     fetchMock
       .get(`https://joanie.test/api/courses/${course.code}/`, course)
-      .get('https://joanie.test/api/orders/', { results: [order] })
+      .get('https://joanie.test/api/orders/', { results: [] })
       .get('https://joanie.test/api/addresses/', [])
       .get('https://joanie.test/api/credit-cards/', []);
 
@@ -188,6 +185,18 @@ describe('CourseProductsList', () => {
     });
 
     screen.getByRole('heading', { level: 6, name: 'Enrolled' });
-    expect(screen.queryByRole('button', { name: course.call_to_action })).toBeNull();
+
+    // Button to purchase product is not displayed
+    expect(screen.queryByRole('button', { name: product.call_to_action })).toBeNull();
+
+    // Links to access to enrolled course runs are displayed
+    expect(screen.queryAllByRole('link', { name: 'Go to course' })).toHaveLength(
+      product.target_courses.length,
+    );
+
+    // Buttons to unroll to the enrolled course runs are displayed
+    expect(screen.queryAllByRole('button', { name: 'Unroll' })).toHaveLength(
+      product.target_courses.length,
+    );
   });
 });

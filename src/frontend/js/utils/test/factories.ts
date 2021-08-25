@@ -1,4 +1,4 @@
-import { createSpec, derived, faker, oneOf } from '@helpscout/helix';
+import { compose, createSpec, derived, faker, oneOf } from '@helpscout/helix';
 import { CommonDataProps } from 'types/commonDataProps';
 import { APIBackend } from 'types/api';
 import * as Joanie from 'types/Joanie';
@@ -133,14 +133,22 @@ export const OrganizationFactory = createSpec({
 });
 
 export const JoanieCourseRunFactory = createSpec({
+  end: faker.date.future(0.75)().toISOString(),
+  enrollment_end: faker.date.future(0.5)().toISOString(),
+  enrollment_start: faker.date.past(0.25)().toISOString(),
   id: faker.datatype.uuid(),
   resource_link: faker.internet.url(),
-  title: faker.random.words(Math.ceil(Math.random() * 3)),
-  enrollment_start: faker.date.past(0.25)().toISOString(),
-  enrollment_end: faker.date.future(0.5)().toISOString(),
   start: faker.date.future(0.25)().toISOString(),
-  end: faker.date.future(0.75)().toISOString(),
+  title: faker.random.words(Math.ceil(Math.random() * 3)),
 });
+
+export const JoanieEnrollmentFactory = compose(
+  JoanieCourseRunFactory,
+  createSpec({
+    is_active: true,
+    state: Joanie.EnrollmentState.SET,
+  }),
+);
 
 export const TargetCourseFactory = createSpec({
   code: faker.random.alphaNumeric(5),
@@ -161,11 +169,42 @@ export const CertificateProductFactory = createSpec({
     title: faker.random.words(Math.ceil(Math.random() * 3)),
     description: faker.lorem.sentences(2),
   }),
+  order: null,
   target_courses: TargetCourseFactory.generate(1, 5),
+});
+
+const OrderLiteFactory = createSpec({
+  created_on: faker.date.past()().toISOString(),
+  enrollments: [],
+  id: faker.datatype.uuid(),
+  price: faker.datatype.number(),
+  product: faker.datatype.uuid(),
+  state: Joanie.OrderState.PAID,
 });
 
 // TODO Create CredentialProductFactory and EnrollmentProductFactory
 export const ProductFactory = oneOf([CertificateProductFactory]);
+// Create a product with an order related.
+export const ProductOrderFactory = (
+  productSpec: typeof ProductFactory = CertificateProductFactory,
+) =>
+  compose(productSpec).afterGenerate((product: Joanie.CourseProduct) => {
+    const enrollments = product.target_courses.map((course) => {
+      const index = faker.datatype.number(0, course.course_runs.length - 1)();
+      const courseRun = course.course_runs[index];
+      return {
+        ...courseRun,
+        is_active: true,
+        state: Joanie.EnrollmentState.SET,
+      };
+    });
+
+    const order = OrderLiteFactory.extend({
+      product: product.id,
+      enrollments,
+    });
+    return [product, order];
+  });
 
 export const CourseFactory = createSpec({
   code: faker.random.alphaNumeric(5),
@@ -173,6 +212,7 @@ export const CourseFactory = createSpec({
   title: faker.random.words(Math.ceil(Math.random() * 3)),
   products: ProductFactory.generate(1, 3),
   course_runs: [],
+  orders: null,
 });
 
 export const OrderFactory = createSpec({

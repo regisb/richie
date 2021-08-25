@@ -77,6 +77,7 @@
       &__course-run-list {
         @include m-o-list-group__container;
         color: r-theme-val(product-item, lighter-color);
+        list-style: none;
 
         .course-run-item {
           align-items: center;
@@ -86,15 +87,19 @@
           padding-left: 1rem;
           position: relative;
 
-          &::before {
-            background-color: r-theme-val(product-item, lighter-color);
-            border-radius: 100%;
-            content: '';
-            display: block;
-            height: 6px;
-            left: 0;
-            position: absolute;
-            width: 6px;
+          &:not(.form-field):not(.course-run-item--enrolled) {
+            padding-left: 0;
+
+            &::before {
+              background-color: r-theme-val(product-item, lighter-color);
+              border-radius: 100%;
+              content: '';
+              display: block;
+              height: 6px;
+              left: 0;
+              position: absolute;
+              width: 6px;
+            }
           }
 
           &::after {
@@ -109,6 +114,23 @@
             width: 25%;
           }
 
+          &.form-field {
+            padding-left: 1.5rem;
+
+            .form-field__radio-control {
+              position: absolute;
+              left: 0;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+
+            .form-field__label {
+              display: flex;
+              justify-content: space-between;
+              flex: 1;
+            }
+          }
+
           &__date {
             background-color: r-theme-val(product-item, base-background);
             z-index: 1;
@@ -119,6 +141,15 @@
             &:last-child {
               padding-left: 0.3125rem;
             }
+          }
+        }
+
+        li:last-child {
+          margin-top: 1rem;
+
+          .course-run-item__cta {
+            min-width: 50%;
+            max-width: 100px;
           }
         }
       }

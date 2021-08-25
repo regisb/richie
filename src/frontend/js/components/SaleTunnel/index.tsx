@@ -8,6 +8,7 @@ import { SaleTunnelStepValidation } from 'components/SaleTunnelStepValidation';
 import { StepBreadcrumb } from 'components/StepBreadcrumb';
 import { useStepManager, Manifest } from 'hooks/useStepManager';
 import { useSession } from 'data/SessionProvider';
+import { useCourse } from 'data/CourseProductsProvider';
 import { useOrders } from 'hooks/useOrders';
 
 const messages = defineMessages({
@@ -63,6 +64,7 @@ export const SaleTunnel = ({ product }: SaleTunnelProps) => {
         label: intl.formatMessage(messages.stepResume),
         next: null,
         onExit: () => {
+          course.methods.refetch();
           orders.methods.refetch();
           handleModalClose();
         },
@@ -71,6 +73,7 @@ export const SaleTunnel = ({ product }: SaleTunnelProps) => {
   };
   const { step, next, reset } = useStepManager(manifest);
   const { user, login } = useSession();
+  const course = useCourse();
   const orders = useOrders();
   const [isOpen, setIsOpen] = useState(false);
 

@@ -11,6 +11,7 @@ import {
   QueryStateFactory,
 } from 'utils/test/factories';
 import { SessionProvider } from 'data/SessionProvider';
+import { CourseProvider } from 'data/CourseProductsProvider';
 import createQueryClient from 'utils/react-query/createQueryClient';
 import { REACT_QUERY_SETTINGS, RICHIE_USER_TOKEN } from 'settings';
 import { SaleTunnel } from '.';
@@ -74,7 +75,9 @@ describe('SaleTunnel', () => {
   const Wrapper = ({ client, children }: React.PropsWithChildren<{ client: QueryClient }>) => (
     <IntlProvider locale="en">
       <QueryClientProvider client={client}>
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          <CourseProvider code="00000">{children}</CourseProvider>
+        </SessionProvider>
       </QueryClientProvider>
     </IntlProvider>
   );
@@ -103,6 +106,7 @@ describe('SaleTunnel', () => {
     const queryClient = createQueryClient({ persistor: true });
 
     fetchMock
+      .get('https://joanie.test/api/courses/00000/', [])
       .get('https://joanie.test/api/addresses/', [])
       .get('https://joanie.test/api/credit-cards/', [])
       .get('https://joanie.test/api/orders/', []);
@@ -114,6 +118,9 @@ describe('SaleTunnel', () => {
         </Wrapper>,
       );
     });
+
+    fetchMock.resetHistory();
+
     // Only CTA is displayed
     const button = screen.getByRole('button', { name: product.call_to_action });
 
@@ -136,9 +143,11 @@ describe('SaleTunnel', () => {
     screen.getByRole('heading', { level: 1, name: 'SaleTunnelStepResume Component' });
     next = screen.getByRole('button', { name: 'Next' });
 
-    // - Terminated, resume.onExit callback is triggered to refresh orders
+    // - Terminated, resume.onExit callback is triggered to refresh course and orders
     fireEvent.click(next);
-    expect(fetchMock.calls()).toHaveLength(1);
-    expect(fetchMock.lastUrl()).toEqual('https://joanie.test/api/orders/');
+    const calls = fetchMock.calls();
+    expect(calls).toHaveLength(2);
+    expect(calls[0][0]).toEqual('https://joanie.test/api/courses/00000/');
+    expect(calls[1][0]).toEqual('https://joanie.test/api/orders/');
   });
 });
