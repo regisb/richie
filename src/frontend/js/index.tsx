@@ -14,6 +14,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { IntlProvider } from 'react-intl';
 import { QueryClientProvider } from 'react-query';
+import countries from 'i18n-iso-countries';
 import createQueryClient from 'utils/react-query/createQueryClient';
 
 import { Root } from 'components/Root';
@@ -32,6 +33,8 @@ async function render() {
     if (!locale) {
       throw new Error('<html> lang attribute is required to be set with a BCP47/RFC5646 locale.');
     }
+
+    const [languageCode, countryCode] = locale.split('-');
 
     // Polyfill outdated browsers who do not have Node.prototype.append
     if (
@@ -59,7 +62,6 @@ async function render() {
         // When countryCode is identical to languageCode, intlrelativeformat uses
         // only languageCode as locale file name
         let localeFilename = locale;
-        const [languageCode, countryCode] = localeFilename.split('-');
         if (RegExp(languageCode, 'i').test(countryCode)) {
           localeFilename = languageCode;
         }
@@ -89,6 +91,12 @@ async function render() {
       }
     }
 
+    try {
+      countries.registerLocale(require(`i18n-iso-countries/langs/${languageCode}.json`));
+    } catch (e) {
+      handle(e);
+    }
+
     // Create a react root element we'll render into. Note that this is just used to anchor our React tree in an
     // arbitraty place since all our actual UI components will be rendered into their own containers through portals.
     const reactRoot = document.createElement('div');
@@ -101,7 +109,7 @@ async function render() {
     // Render the tree inside a shared `IntlProvider` so all components are able to access translated strings.
     ReactDOM.render(
       <QueryClientProvider client={queryClient}>
-        <IntlProvider locale={locale} messages={translatedMessages}>
+        <IntlProvider locale={locale} defaultLocale="en-US" messages={translatedMessages}>
           <Root richieReactSpots={richieReactSpots} />
         </IntlProvider>
       </QueryClientProvider>,
