@@ -202,13 +202,12 @@ class SyncCourseRunApiTestCase(CMSTestCase):
         )
         mock_signal.reset_mock()
 
-        authorization = "SIG-HMAC-SHA256 {:s}".format(
-            hmac.new(
-                "shared secret".encode("utf-8"),
-                msg=json.dumps(data).encode("utf-8"),
-                digestmod=hashlib.sha256,
-            ).hexdigest()
-        )
+        digest = hmac.new(
+            "shared secret".encode("utf-8"),
+            msg=json.dumps(data).encode("utf-8"),
+            digestmod=hashlib.sha256,
+        ).hexdigest()
+        authorization = f"SIG-HMAC-SHA256 {digest:s}"
         response = self.client.post(
             "/api/v1.0/course-runs-sync",
             data,
