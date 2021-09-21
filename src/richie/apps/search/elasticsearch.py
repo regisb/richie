@@ -24,9 +24,15 @@ class ElasticsearchClientCompat7to6(Elasticsearch):
         of Elasticsearch we're working with.
         """
         super().__init__(hosts=hosts, transport_class=transport_class, **kwargs)
+        self.__es_version = None
+
+    @property
+    def __es_version__(self):
         # Store the ES version information in memory so we don't have to re-make the
         # info request constantly.
-        self.__es_version__ = self.info()["version"]["number"][:1]
+        if self.__es_version is None:
+            self.__es_version = self.info()["version"]["number"][:1]
+        return self.__es_version
 
     # pylint: disable=W0622
     def get(self, index, id):
