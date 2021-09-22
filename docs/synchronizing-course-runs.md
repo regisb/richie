@@ -82,7 +82,7 @@ def update_course(course_key, *args, **kwargs):
     edxapp_domain = microsite.get_value("site_domain", settings.LMS_BASE)
 
     data = {
-        "resource_link": "https://{:s}/courses/{!s}/info".format(
+        "resource_link": "https://{:s}/courses/{!s}/course".format(
             edxapp_domain, course_key
         ),
         "start": course.start and course.start.isoformat(),
@@ -93,13 +93,13 @@ def update_course(course_key, *args, **kwargs):
     }
 
     signature = hmac.new(
-        setting.COURSE_HOOK["secret"].encode("utf-8"),
+        settings.COURSE_HOOK["secret"].encode("utf-8"),
         msg=json.dumps(data).encode("utf-8"),
         digestmod=hashlib.sha256,
     ).hexdigest()
 
     response = requests.post(
-        setting.COURSE_HOOK["url"],
+        settings.COURSE_HOOK["url"],
         json=data,
         headers={"Authorization": "SIG-HMAC-SHA256 {:s}".format(signature)},
     )
