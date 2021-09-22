@@ -107,7 +107,7 @@
                         {% endblock synopsis %}
 
                         {% if current_page.publisher_is_draft or not current_page|is_empty_placeholder:"course_introduction" %}
-                            <div property="description">{% placeholder "course_introduction" or %}<p>{% trans 'Enter here a introduction of your course.' %}</p>{% endplaceholder %}</div>
+                            <div property="description">{% placeholder "course_introduction" or %}<p>{% trans 'Enter here an introduction of your course.' %}</p>{% endplaceholder %}</div>
                         {% endif %}
                     </div>
 
